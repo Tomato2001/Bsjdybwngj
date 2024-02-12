@@ -1,0 +1,430 @@
+-- Создаем локальную переменную для хранения игрока
+local player = game.Players.LocalPlayer
+
+-- Создаем локальную переменную для хранения графического интерфейса
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+
+-- Создаем локальную переменную для хранения фрейма меню
+local menu = Instance.new("Frame", gui)
+menu.Name = "Menu"
+menu.Size = UDim2.new(0.3, 0, 0.4, 0) -- Подгоняем размер под количество элементов
+menu.Position = UDim2.new(0.35, 0, 0.3, 0) -- Центрируем на экране
+menu.BackgroundTransparency = 0.1
+menu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+menu.Draggable = true
+
+
+-- Создаем локальную переменную для хранения заголовка меню
+local title = Instance.new("TextLabel", menu)
+title.Name = "Title"
+title.Size = UDim2.new(1, 0, 0.1, 0)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.new(0, 0, 0)
+title.BackgroundTransparency = 0.5
+title.Text = "Grip Tools GUI"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextScaled = true
+title.Font = Enum.Font.SourceSansBold
+
+-- Создаем локальную переменную для хранения кнопки закрытия меню
+local closeButton = Instance.new("TextButton", menu)
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+closeButton.Position = UDim2.new(0.9, 0, 0, 0)
+closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+closeButton.BackgroundTransparency = 0.5
+closeButton.Text = "Х"
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.TextScaled = true
+closeButton.Font = Enum.Font.SourceSansBold
+
+-- Предположим, что closeButton — это кнопка закрытия на первой странице
+closeButton.MouseButton1Click:Connect(function()
+    menu.Visible = false -- Скрываем только первую страницу
+end)
+
+-- Создаем локальную переменную для хранения кнопки сворачивания меню
+local minimizeButton = Instance.new("TextButton", menu)
+minimizeButton.Name = "MinimizeButton"
+minimizeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+minimizeButton.Position = UDim2.new(0.8, 0, 0, 0) -- Сдвигаем налево относительно кнопки закрытия
+minimizeButton.BackgroundColor3 = Color3.new(0, 0, 1)
+minimizeButton.BackgroundTransparency = 0.5
+minimizeButton.Text = "–"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.TextScaled = true
+minimizeButton.Font = Enum.Font.SourceSansBold
+
+
+
+-- Создаем текстовые поля для ввода четырех чисел
+local inputs = {}
+local inputNames = {"X1", "X2", "Y1", "Y2", "Z1", "Z2"} -- Имена для полей ввода
+for i, name in ipairs(inputNames) do
+    local input = Instance.new("TextBox", menu)
+    input.Name = name
+    input.Size = UDim2.new(0.9, 0, 0.1, 0)
+    input.Position = UDim2.new(0.05, 0, (i-1)*0.12 + 0.14, 0) -- Расположение с небольшим отступом
+    input.Text = ""
+    input.PlaceholderText = "Enter the number for " .. name
+    input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    input.BackgroundTransparency = 0.5
+    input.TextScaled = true
+    inputs[name] = input -- Сохраняем ссылку на поле ввода
+end
+
+-- Создаем кнопку для активации
+local activateButton = Instance.new("TextButton", menu)
+activateButton.Name = "ActivateButton"
+activateButton.Size = UDim2.new(0.9, 0, 0.1, 0)
+activateButton.Position = UDim2.new(0.05, 0, 0.85, 0) -- В нижней части меню
+activateButton.Text = " Activate"
+activateButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+activateButton.BackgroundTransparency = 0.5
+activateButton.TextScaled = true
+
+-- Функция активации
+activateButton.MouseButton1Click:Connect(function()
+    local x1 = tonumber(inputs["X1"].Text) or 0
+    local x2 = tonumber(inputs["X2"].Text) or 0
+    local y1 = tonumber(inputs["Y1"].Text) or 0
+    local y2 = tonumber(inputs["Y2"].Text) or 0
+    local z1 = tonumber(inputs["Z1"].Text) or 0
+    local z2 = tonumber(inputs["Z2"].Text) or 0 -- Заменяем "@#" на введенное пользователем число
+    for _, tool in ipairs(player.Backpack:GetChildren()) do
+        if tool:IsA("Tool") then
+            tool.GripPos = Vector3.new(math.random(-x1, x2), math.random(-y1, y1), math.random(-z1, z2))
+        end
+    end
+end)
+
+-- Создаем локальную переменную для хранения кнопки перехода на вторую страницу
+local nextPageButton = Instance.new("TextButton", menu)
+nextPageButton.Name = "NextPageButton"
+nextPageButton.Size = UDim2.new(0.1, 0, 0.1, 0) -- Размер кнопки
+nextPageButton.Position = UDim2.new(0, 0, 0, 0) -- Размещаем в левом верхнем углу
+nextPageButton.BackgroundColor3 = Color3.new(0, 1, 0) -- Зеленый фон для отличия
+nextPageButton.BackgroundTransparency = 0.5
+nextPageButton.Text = ">"
+nextPageButton.TextColor3 = Color3.new(1, 1, 1) -- Белый текст
+nextPageButton.TextScaled = true
+nextPageButton.Font = Enum.Font.SourceSansBold
+
+    -- Создаем вторую страницу меню как Frame
+local secondPage = Instance.new("Frame", gui)
+secondPage.Name = "SecondPage"
+secondPage.Size = UDim2.new(0.3, 0, 0.4, 0) -- Такой же размер, как и у первой страницы
+secondPage.Position = UDim2.new(0.35, 0, 0.3, 0) -- Та же позиция, что и у первой страницы
+secondPage.BackgroundTransparency = 0.1
+secondPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+secondPage.Visible = false -- Сделаем вторую страницу невидимой по умолчанию
+
+-- Добавляем заголовок ко второй странице
+local secondPageTitle = Instance.new("TextLabel", secondPage)
+secondPageTitle.Name = "Title"
+secondPageTitle.Size = UDim2.new(1, 0, 0.1, 0)
+secondPageTitle.Position = UDim2.new(0, 0, 0, 0)
+secondPageTitle.BackgroundColor3 = Color3.new(0, 0, 0)
+secondPageTitle.BackgroundTransparency = 0.5
+secondPageTitle.Text = "Equip Tools"
+secondPageTitle.TextColor3 = Color3.new(1, 1, 1)
+secondPageTitle.TextScaled = true
+secondPageTitle.Font = Enum.Font.SourceSansBold
+
+
+-- Модифицируем обработчик кнопки для перехода на вторую страницу
+nextPageButton.MouseButton1Click:Connect(function()
+    menu.Visible = false -- Скрываем первую страницу
+    secondPage.Visible = true -- Отображаем вторую страницу
+end)
+
+-- Добавляем кнопку возврата на первую страницу во вторую страницу
+local backButton = Instance.new("TextButton", secondPage)
+backButton.Name = "BackButton"
+backButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+backButton.Position = UDim2.new(0, 0, 0, 0) -- В левом верхнем углу второй страницы
+backButton.BackgroundColor3 = Color3.new(1, 0, 0) -- Красный фон для отличия
+backButton.BackgroundTransparency = 0.5
+backButton.Text = "<"
+backButton.TextColor3 = Color3.new(1, 1, 1)
+backButton.TextScaled = true
+backButton.Font = Enum.Font.SourceSansBold
+
+-- Обработчик кнопки возврата
+backButton.MouseButton1Click:Connect(function()
+    secondPage.Visible = false -- Скрываем вторую страницу
+    menu.Visible = true -- Отображаем первую страницу
+end)
+
+-- Предположим, что все эти элементы находятся внутри secondPage вашего GUI
+
+-- Создаем список для хранения названий предметов
+local itemListFrame = Instance.new("ScrollingFrame", secondPage)
+itemListFrame.Name = "ItemList"
+itemListFrame.Size = UDim2.new(0.8, 0, 0.5, 0)
+itemListFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
+itemListFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Будет обновляться динамически
+itemListFrame.ScrollBarThickness = 10
+itemListFrame.ScrollingDirection = Enum.ScrollingDirection.Y -- Ограничиваем прокрутку только по вертикали
+
+-- Функция для обновления списка предметов (для прокрутки и позиционирования)
+local function updateItemList()
+    local yOffset = 0
+    for i, child in ipairs(itemListFrame:GetChildren()) do
+        if child:IsA("Frame") then
+            child.Position = UDim2.new(0, 0, 0, yOffset)
+            yOffset = yOffset + child.Size.Y.Offset + 5 -- Отступ между элементами списка
+        end
+    end
+    itemListFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
+end
+
+-- Функция для добавления предмета в список
+local function addItemToList(itemName)
+    local itemFrame = Instance.new("Frame", itemListFrame)
+    itemFrame.Size = UDim2.new(1, 0, 0, 50)
+
+    local itemNameLabel = Instance.new("TextLabel", itemFrame)
+    itemNameLabel.Size = UDim2.new(0.8, 0, 1, 0)
+    itemNameLabel.Text = itemName
+    itemNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local removeButton = Instance.new("TextButton", itemFrame)
+    removeButton.Size = UDim2.new(0.2, 0, 1, 0)
+    removeButton.Position = UDim2.new(0.8, 0, 0, 0)
+    removeButton.Text = "Х"
+    removeButton.MouseButton1Click:Connect(function()
+        itemFrame:Destroy()
+        updateItemList()
+    end)
+
+    updateItemList()
+end
+
+-- Текстовое поле для ввода названия предмета
+local inputField = Instance.new("TextBox", secondPage)
+inputField.Position = UDim2.new(0.1, 0, 0.61, 0)
+inputField.Size = UDim2.new(0.8, 0, 0.08, 0)
+inputField.Text = ""
+
+-- Кнопка для добавления введенного предмета в список
+local addButton = Instance.new("TextButton", secondPage)
+addButton.Position = UDim2.new(0.1, 0, 0.71, 0)
+addButton.Size = UDim2.new(0.8, 0, 0.07, 0)
+addButton.Text = "Add item"
+addButton.MouseButton1Click:Connect(function()
+    addItemToList(inputField.Text)
+    inputField.Text = "" -- Очищаем поле после добавления
+end)
+
+-- Функция для проверки, существует ли предмет в списке
+local function itemExistsInList(itemName)
+    for i, itemFrame in ipairs(itemListFrame:GetChildren()) do
+        if itemFrame:IsA("Frame") and itemFrame:FindFirstChild("TextLabel") and itemFrame:FindFirstChild("TextLabel").Text == itemName then
+            return true
+        end
+    end
+    return false
+end
+
+local addAllButton = Instance.new("TextButton", secondPage)
+addAllButton.Position = UDim2.new(0.1, 0, 0.80, 0)
+addAllButton.Size = UDim2.new(0.8, 0, 0.07, 0)
+addAllButton.Text = "Add all"
+addAllButton.MouseButton1Click:Connect(function()
+    local LP = game.Players.LocalPlayer
+    if LP and LP.Backpack then
+        for _, item in ipairs(LP.Backpack:GetChildren()) do
+            if not itemExistsInList(item.Name) then -- Проверяем, не добавлен ли уже такой предмет
+                addItemToList(item.Name)
+            end
+        end
+    end
+end)
+
+-- Кнопка для активации всех предметов в списке
+local activateButton = Instance.new("TextButton", secondPage)
+activateButton.Position = UDim2.new(0.1, 0, 0.89, 0)
+activateButton.Size = UDim2.new(0.8, 0, 0.07, 0)
+activateButton.Text = "Activate"
+activateButton.MouseButton1Click:Connect(function()
+    local LP = game.Players.LocalPlayer
+    repeat wait() until LP.Character
+    for _, itemFrame in ipairs(itemListFrame:GetChildren()) do
+        if itemFrame:IsA("Frame") then
+            for _, v in pairs(LP.Backpack:GetChildren()) do
+                if v.Name == itemFrame:FindFirstChild("TextLabel").Text then
+                    v.Parent = LP.Character
+                end
+            end
+        end
+    end
+end)
+
+-- Создаем локальную переменную для хранения кнопки перехода на третью страницу
+local toThirdPageButton = Instance.new("TextButton", menu)
+toThirdPageButton.Name = "ToThirdPageButton"
+toThirdPageButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+toThirdPageButton.Position = UDim2.new(0.1, 0, 0, 0) -- Размещаем чуть ниже верхнего края
+toThirdPageButton.BackgroundColor3 = Color3.new(0, 0.5, 0.5) -- Цвет фона отличается
+toThirdPageButton.BackgroundTransparency = 0.5
+toThirdPageButton.Text = ">>"
+toThirdPageButton.TextColor3 = Color3.new(1, 1, 1)
+toThirdPageButton.TextScaled = true
+toThirdPageButton.Font = Enum.Font.SourceSansBold
+
+-- Создаем третью страницу меню как Frame
+local thirdPage = Instance.new("Frame", gui)
+thirdPage.Name = "ThirdPage"
+thirdPage.Size = UDim2.new(0.3, 0, 0.4, 0)
+thirdPage.Position = UDim2.new(0.35, 0, 0.3, 0)
+thirdPage.BackgroundTransparency = 0.1
+thirdPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+thirdPage.Visible = false -- Невидима по умолчанию
+
+-- Добавляем заголовок к третьей странице
+local thirdPageTitle = Instance.new("TextLabel", thirdPage)
+thirdPageTitle.Name = "Title"
+thirdPageTitle.Size = UDim2.new(1, 0, 0.1, 0)
+thirdPageTitle.Position = UDim2.new(0, 0, 0, 0)
+thirdPageTitle.BackgroundColor3 = Color3.new(0, 0, 0)
+thirdPageTitle.BackgroundTransparency = 0.5
+thirdPageTitle.Text = "Multi Gear"
+thirdPageTitle.TextColor3 = Color3.new(1, 1, 1)
+thirdPageTitle.TextScaled = true
+thirdPageTitle.Font = Enum.Font.SourceSansBold
+
+-- Переключение на третью страницу
+toThirdPageButton.MouseButton1Click:Connect(function()
+    menu.Visible = false -- Скрываем первую страницу
+    thirdPage.Visible = true -- Показываем третью страницу
+end)
+
+-- Добавляем кнопку возврата на первую страницу в третью страницу
+local backToFirstFromThirdButton = Instance.new("TextButton", thirdPage)
+backToFirstFromThirdButton.Name = "BackToFirstFromThirdButton"
+backToFirstFromThirdButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+backToFirstFromThirdButton.Position = UDim2.new(0, 0, 0, 0) -- В левом верхнем углу третьей страницы
+backToFirstFromThirdButton.BackgroundColor3 = Color3.new(1, 0.5, 0) -- Отличительный цвет фона
+backToFirstFromThirdButton.BackgroundTransparency = 0.5
+backToFirstFromThirdButton.Text = "<<"
+backToFirstFromThirdButton.TextColor3 = Color3.new(1, 1, 1)
+backToFirstFromThirdButton.TextScaled = true
+backToFirstFromThirdButton.Font = Enum.Font.SourceSansBold
+
+-- Обработчик кнопки возврата на первую страницу с третьей
+backToFirstFromThirdButton.MouseButton1Click:Connect(function()
+    thirdPage.Visible = false -- Скрываем третью страницу
+    menu.Visible = true -- Показываем первую страницу
+end)
+
+
+-- Создаем текстовое поле для ввода названия предмета на третьей странице
+local itemNameInput = Instance.new("TextBox", thirdPage)
+itemNameInput.Size = UDim2.new(0.8, 0, 0.1, 0)
+itemNameInput.Position = UDim2.new(0.1, 0, 0.1, 0)
+itemNameInput.Text = "Enter name item "
+itemNameInput.ClearTextOnFocus = true -- Очищать текст при фокусе
+
+-- Кнопка активации на третьей странице
+local activateButton = Instance.new("TextButton", thirdPage)
+activateButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+activateButton.Position = UDim2.new(0.1, 0, 0.25, 0)
+activateButton.Text = "Activate"
+activateButton.MouseButton1Click:Connect(function()
+    local lp = game:GetService("Players").LocalPlayer
+    -- Перебираем все предметы в рюкзаке
+    for i, tool in pairs(lp.Backpack:GetChildren()) do
+        -- Проверяем, является ли предмет инструментом и соответствует ли его название введенному
+        if tool:IsA("Tool") and tool.Name == itemNameInput.Text then
+            -- Перемещаем предмет к персонажу для активации
+            tool.Parent = lp.Character
+            -- Активируем предмет
+            tool:Activate()
+            -- Ожидаем небольшой промежуток времени
+            wait() -- Используйте wait() вместо task.wait() для совместимости
+            -- Возвращаем предмет обратно в рюкзак
+            tool.Parent = lp.Backpack
+        end
+    end
+end)
+
+local helpButton = Instance.new("TextButton", menu)
+helpButton.Name = "HelpButton"
+helpButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+helpButton.Position = UDim2.new(0.7, 0, 0, 0) -- Позиционирование слева от кнопки сворачивания
+helpButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
+helpButton.BackgroundTransparency = 0.5
+helpButton.Text = "?"
+helpButton.TextColor3 = Color3.new(1, 1, 1)
+helpButton.TextScaled = true
+helpButton.Font = Enum.Font.SourceSansBold
+
+-- Создаем ImageLabel для отображения изображения
+local imageLabel = Instance.new("ImageLabel", gui)
+imageLabel.Name = "HelpImage"
+imageLabel.Size = UDim2.new(0.4, 0, 0.5, 0) -- Размер изображения
+imageLabel.Position = UDim2.new(0.65, 0, 0.3, 0) -- Позиция справа от меню
+imageLabel.Image = "rbxassetid://16341497779" -- Указываем Asset ID изображения
+imageLabel.Visible = false -- Изначально изображение скрыто
+
+local imageVisible = false -- Переменная для отслеживания состояния видимости изображения
+
+helpButton.MouseButton1Click:Connect(function()
+    imageVisible = not imageVisible -- Переключаем состояние видимости
+    imageLabel.Visible = imageVisible -- Применяем новое состояние видимости к ImageLabel
+end)
+
+-- Создаем TextLabel для отображения текста "Created By Tomato2007"
+local createdByLabel = Instance.new("TextLabel", menu)
+createdByLabel.Name = "CreatedByLabel"
+createdByLabel.Size = UDim2.new(0.3, 0, 0.1, 0) -- Задаем размер
+createdByLabel.Position = UDim2.new(0, 0, 0.9, 0) -- Размещаем в левом нижнем углу меню
+createdByLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Цвет фона
+createdByLabel.BackgroundTransparency = 1 -- Прозрачный фон
+createdByLabel.Text = "Created By Tomato2007"
+createdByLabel.TextColor3 = Color3.new(1, 0, 0) -- Белый цвет текста
+createdByLabel.TextScaled = false -- Автоматическое масштабирование текста отключено
+createdByLabel.Font = Enum.Font.SourceSans -- Шрифт
+createdByLabel.TextSize = 7 -- Размер текста
+createdByLabel.TextXAlignment = Enum.TextXAlignment.Left -- Выравнивание текста по левому краю
+createdByLabel.TextYAlignment = Enum.TextYAlignment.Bottom -- Выравнивание текста по нижнему краю
+
+
+
+
+-- Создаем локальную переменную для хранения кнопки разворачивания меню
+local expandButton = Instance.new("TextButton", gui)
+expandButton.Name = "ExpandButton"
+expandButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+expandButton.Position = UDim2.new(0.9, 0, 0.2, 0) -- Позиция на экране
+expandButton.BackgroundColor3 = Color3.new(0, 0, 0)
+expandButton.BackgroundTransparency = 0.5
+expandButton.Text = "+"
+expandButton.TextColor3 = Color3.new(1, 1, 1)
+expandButton.TextScaled = true
+expandButton.Font = Enum.Font.SourceSansBold
+expandButton.Visible = false -- Сначала кнопка невидима
+
+-- Функция для сворачивания меню
+minimizeButton.MouseButton1Click:Connect(function()
+    menu.Visible = false
+    expandButton.Visible = true
+end)
+
+-- Функция для разворачивания меню
+expandButton.MouseButton1Click:Connect(function()
+    menu.Visible = true
+    expandButton.Visible = false
+end)
+
+
+-- Создаем функцию, которая срабатывает при нажатии на кнопку закрытия меню
+closeButton.MouseButton1Click:Connect(function()
+    -- Удаляем графический интерфейс
+    gui:Destroy()
+end)
+
+
+-- Вызываем функцию, которая создает все секции и кнопки меню
+createMenu()
