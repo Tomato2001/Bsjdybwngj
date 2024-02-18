@@ -11,8 +11,8 @@ menu.Size = UDim2.new(0.3, 0, 0.4, 0) -- Подгоняем размер под 
 menu.Position = UDim2.new(0.35, 0, 0.3, 0) -- Центрируем на экране
 menu.BackgroundTransparency = 0.1
 menu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+menu.Active = true 
 menu.Draggable = true
-
 
 -- Создаем локальную переменную для хранения заголовка меню
 local title = Instance.new("TextLabel", menu)
